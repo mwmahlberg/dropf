@@ -45,15 +45,15 @@ func (s *Bolt) init() error {
 		})
 }
 
-// FileBucketOption sets the name of the BoltDB bucket the files are stored in
-func FileBucketOption(name string) func(b *Bolt) {
+// FileBucket sets the name of the BoltDB bucket the files are stored in
+func FileBucket(name string) func(b *Bolt) {
 	return func(b *Bolt) {
 		b.fb = []byte(name)
 	}
 }
 
-// FilenameBucketOption sets the name of the BoltDB bucket the filenames are stored in.
-func FilenameBucketOption(name string) func(b *Bolt) {
+// FilenameBucket sets the name of the BoltDB bucket the filenames are stored in.
+func FilenameBucket(name string) func(b *Bolt) {
 	return func(b *Bolt) {
 		b.nb = []byte(name)
 	}
