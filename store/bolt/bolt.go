@@ -14,7 +14,7 @@ var (
 	defaultNameBucket   = []byte("names")
 	defaultStatusBucket = []byte("isPublic")
 	defaultExpireBucket = []byte("expires")
-	defultFileName      = "dropf.db"
+	defaultFileName     = "dropf.db"
 )
 
 // Bolt implements the FileStorer interface.
@@ -75,7 +75,7 @@ func StatusBucket(name string) func(b *Bolt) {
 func NewBoltFileStore(db *bolt.DB, options ...func(b *Bolt)) (b *Bolt, err error) {
 
 	if db == nil {
-		if db, err = bolt.Open(defultFileName, 0600, nil); err != nil {
+		if db, err = bolt.Open(defaultFileName, 0600, nil); err != nil {
 			return nil, err
 		}
 
@@ -200,4 +200,35 @@ func (s *Bolt) Remove(id uuid.UUID) (err error) {
 			}
 			return nil
 		})
+}
+
+func (s *Bolt) IsExpired(id uuid.UUID) (expired bool) {
+
+	s.db.View(
+		func(tx *bolt.Tx) error {
+			expired = tx.Bucket(s.eb).Get(id) != nil
+			return nil
+		})
+	return
+}
+
+func (s *Bolt) IsPublic(id uuid.UUID) (public bool) {
+	s.db.View(
+		func(tx *bolt.Tx) error {
+			public = tx.Bucket(s.eb).Get(id) != nil
+			return nil
+		})
+	return
+}
+
+func (s *Bolt) List() (list []store.MetaData) {
+	s.db.View(
+		func(tx *bolt.Tx) error {
+			return tx.Bucket(s.nb).ForEach(
+				func(k, v []byte) error {
+					list = append(list, store.MetaData{ID: k, Name: string(v)})
+					return nil
+				})
+		})
+	return
 }

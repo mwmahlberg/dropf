@@ -33,6 +33,9 @@ type File struct {
 // The FileStorer interface describes the behaviour every file store has to implement.
 type FileStorer interface {
 
+	// List returns the metadata for all files.
+	List() []MetaData
+
 	// IsPublic returns true if the file is free to be displayed publicly
 	// and false if not. Defaults to false for security reasons.
 	IsPublic(uuid.UUID) bool
