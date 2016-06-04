@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/boltdb/bolt"
+	bs "github.com/jubalh/dropf/store/bolt"
 )
 
 func main() {
@@ -15,10 +16,18 @@ func main() {
 	}
 	defer db.Close()
 
-	http.HandleFunc("/", indexHandler)
-	http.HandleFunc("/login", loginHandler)
-	http.HandleFunc("/userspace", userspaceHandler)
-	http.HandleFunc("/upload", uploadHandler)
+	store, _ := bs.NewBoltFileStore(db)
+
+	fh := &FileHandler{}
+	fh.Store = store
+
+	// fh := &FileHandler{}
+	http.Handle("/", fh)
+
+	// http.HandleFunc("/", indexHandler)
+	// http.HandleFunc("/login", loginHandler)
+	// http.HandleFunc("/userspace", userspaceHandler)
+	// http.HandleFunc("/upload", uploadHandler)
 
 	err = http.ListenAndServe(":9090", nil)
 	if err != nil {
