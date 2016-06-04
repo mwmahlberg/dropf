@@ -27,7 +27,7 @@ type MetaData struct {
 // File consists of metadata describing it and the files actual content
 type File struct {
 	Metadata MetaData
-	Content  io.ReadWriter
+	Content  io.Reader
 }
 
 // The FileStorer interface describes the behaviour every file store has to implement.
